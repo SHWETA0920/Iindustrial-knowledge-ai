@@ -1,125 +1,112 @@
-# Industrial Knowledge Intelligence — Hackathon Winning Extension
+# Industrial Knowledge Intelligence — Full Project
 
-Extended build for ET AI Hackathon, PS8: **AI for Industrial Knowledge Intelligence: Unified Asset & Operations Brain**.
+Build for ET AI Hackathon 2026, Problem Statement 8. This project delivers a unified AI-powered platform that transforms fragmented industrial documents into actionable operational intelligence.
 
-This version upgrades the original Expert Knowledge Copilot core into a much stronger demo scope with:
-- multi-format ingestion
-- OCR for scanned records
-- industrial entity extraction
-- metadata-rich retrieval
-- knowledge graph intelligence
-- supervisor-routed copilot
-- RCA agent
-- compliance checker
-- lessons learned engine
-- proactive alerts
-- dashboard, document explorer, and graph view
-- evaluation harness and demo-corpus generator
+## Overview
 
-## Implemented modules
-
-| Module | Status | Notes |
-|---|---|---|
-| PDF ingestion | ✅ | Existing core preserved |
-| DOCX ingestion | ✅ | `python-docx` based |
-| Excel / CSV ingestion | ✅ | `pandas` + `openpyxl` |
-| OCR / scanned documents | ✅ | `pytesseract` + `pdf2image` + Pillow |
-| Entity extraction | ✅ | Groq structured extraction + verification pass |
-| Metadata management | ✅ | per-chunk source/page/category/file type |
-| Knowledge graph | ✅ | NetworkX graph; Neo4j-ready conceptual model |
-| Advanced RAG | ✅ | multi-query + cross-encoder reranking |
-| RCA agent | ✅ | graph history + RAG evidence |
-| Compliance checker | ✅ | gap detection + auto-drafted correction |
-| Lessons learned engine | ✅ | recurring failure mining + recommendations |
-| Agentic supervisor | ✅ | lightweight router instead of full LangGraph |
-| Alerts | ✅ | in-dashboard proactive warnings |
-| Frontend dashboard | ✅ | Flask + HTML/JS demo UI |
-| Document explorer | ✅ | inventory by file, type, category |
-| Knowledge graph visualization | ✅ | lightweight SVG visualization + optional PyVis export |
-| Evaluation metrics | ✅ | benchmark script + example dataset |
-| Demo corpus generator | ✅ | synthetic multi-format seed set |
-| P&ID vision parsing | ⏳ Roadmap | high-innovation optional future scope |
-| PostgreSQL/Auth | ⏳ Roadmap | can be added after demo freeze |
-
-## Project structure
-
-```text
+```
 industrial-knowledge-copilot/
-├── app.py
-├── requirements.txt
-├── README.md
-├── templates/
-│   └── index.html
-├── data/
-│   └── eval_questions.example.json
+├── data/                     ← put your documents here (PDF, DOCX, XLSX, CSV, PNG/JPG scans)
 ├── src/
-│   ├── ingest.py
-│   ├── extract_entities.py
-│   ├── knowledge_graph.py
-│   ├── query.py
-│   ├── rca_agent.py
-│   ├── compliance_agent.py
-│   ├── supervisor_agent.py
-│   ├── evaluate.py
-│   └── create_demo_corpus.py
-└── outputs_store/
+│   ├── ingest.py             ← Module 1: multi-format ingestion + OCR
+│   ├── extract_entities.py   ← Module 2/3: entity extraction + metadata
+│   ├── knowledge_graph.py    ← Module 4: NetworkX knowledge graph + queries + JSON export
+│   ├── query.py              ← Module 5: multi-query expansion + reranked RAG + confidence scoring
+│   ├── rca_agent.py          ← Module 6/9: RCA agent + recurring pattern detection
+│   ├── compliance_agent.py   ← Module 8: compliance gap detection + auto-draft
+│   ├── risk_prediction.py    ← Failure risk scoring (rule-based)
+│   └── evaluation.py         ← Retrieval accuracy / response benchmarking
+├── templates/
+│   └── index.html            ← Dashboard with chat UI, graph explorer, risk & evaluation panels
+├── app.py                    ← Flask API backend
+├── outputs_store/            ← Generated outputs (index, entities, graph, metrics)
+├── requirements.txt
+└── .env.example
 ```
 
-## Why this scope is stronger for judging
+## Key Modules
 
-This project now demonstrates the exact journey judges like to see:
-1. **Documents come in from multiple real-world industrial formats**
-2. **The system extracts industrial entities and relationships**
-3. **The graph connects equipment, failures, causes, and regulations**
-4. **The copilot answers with citations**
-5. **RCA goes beyond Q&A into operational decision support**
-6. **Compliance analysis shows measurable business value**
-7. **Lessons learned and alerts make it proactive, not just reactive**
-8. **The dashboard makes the project demo-ready**
+| Module                        | Description                                                       |
+| ----------------------------- | ----------------------------------------------------------------- |
+| Knowledge Graph Visualization | Interactive graph explorer for equipment, failures, and documents |
+| Confidence Scoring            | 0–100 score for every answer based on relevance and evidence      |
+| Failure Risk Prediction       | Rule-based scoring using frequency, severity, and recency         |
+| Advanced Dashboard            | Unified UI with 7 functional tabs                                 |
+| Evaluation Metrics            | Measures retrieval accuracy and response time                     |
+
+---
+
+## Important Notes
+
+### Evaluation Module
+
+Replace placeholder questions in:
+
+```
+outputs_store/eval_questions.json
+```
+
+with real domain-specific queries before demo.
+
+### Risk Prediction
+
+This module is **rule-based**, not ML-based. It combines:
+
+* Failure frequency
+* Recency
+* Severity keywords
+* Pattern recurrence
+
+---
+
+## Design Choices
+
+| Feature   | Implementation   | Reason                                     |
+| --------- | ---------------- | ------------------------------------------ |
+| Graph DB  | NetworkX         | Lightweight, no external setup             |
+| Dashboard | Flask + HTML     | Faster development, no frontend build      |
+| Agents    | Python functions | Simpler than full orchestration frameworks |
+| Alerts    | In-dashboard     | No external dependencies                   |
+| Auth/DB   | Not included     | Focus on core judging criteria             |
+
+---
 
 ## Setup
 
-### 1) Python environment
+### 1. Environment Setup
 
 ```bash
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+venv\Scripts\activate   # Windows
 pip install -r requirements.txt
 ```
 
-### 2) OCR system packages
+### 2. OCR Dependencies (Optional)
 
 ```bash
-# Ubuntu / Debian
-sudo apt-get update
-sudo apt-get install -y tesseract-ocr poppler-utils
+# Ubuntu
+sudo apt-get install tesseract-ocr poppler-utils
 
-# macOS
+# Mac
 brew install tesseract poppler
 ```
 
-### 3) Environment variables
+### 3. API Key Setup
 
-Copy `.env.example` to `.env` and add your Groq API key.
+* Copy `.env.example` → `.env`
+* Add your Groq API key
 
-## Fastest hackathon demo path
+### 4. Add Documents
 
-If you do **not** already have plant documents, generate a demo corpus:
+Place files in:
 
-```bash
-python src/create_demo_corpus.py
+```
+data/
 ```
 
-That creates:
-- maintenance history CSV with recurring failures
-- plant SOP DOCX
-- OISD guideline DOCX
-- equipment manual DOCX
-- scanned inspection image for OCR
+---
 
-## Build pipeline
-
-Run the full pipeline in order:
+## Running the Pipeline
 
 ```bash
 python src/ingest.py
@@ -130,87 +117,76 @@ python app.py
 
 Open:
 
-```text
+```
 http://localhost:5000
 ```
 
-## Dashboard capabilities
+---
 
-### Copilot
-Supervisor-routed industrial Q&A with cited sources and advanced retrieval.
+## Features in Dashboard
 
-### RCA Agent
-Enter an equipment tag such as `Pump P101` and generate a structured RCA report grounded in graph history and manuals/logs.
+* Expert Copilot (RAG-based Q&A)
+* RCA Agent
+* Compliance Checker
+* Knowledge Graph Explorer
+* Risk Prediction Panel
+* Alerts System
+* Evaluation Metrics
 
-### Compliance Checker
-Paste a plant procedure and compare it to retrieved regulatory guidance. The system identifies the gap and drafts a corrected section.
+---
 
-### Alerts
-Shows recurring failure patterns as proactive warning cards.
-
-### Document Explorer
-Lists ingested files, types, categories, pages, and chunk counts.
-
-### Knowledge Graph
-Visualizes the relationship network across equipment, failures, causes, documents, and regulations.
-
-### Lessons Learned
-Summarizes repeated incidents and prevention recommendations.
-
-## Evaluation metrics
-
-Use the benchmark harness:
+## CLI Usage
 
 ```bash
-python src/evaluate.py
+python src/query.py "your question"
+python src/rca_agent.py "equipment tag"
+python src/compliance_agent.py file.txt "topic"
+python src/risk_prediction.py "equipment"
+python src/evaluation.py
 ```
 
-To customize, add:
+---
 
-```text
-data/eval_questions.json
-```
+## Demo Strategy
 
-Expected format:
+1. Ask a covered question → show cited answer + high confidence
+2. Ask unknown question → show safe fallback
+3. Run RCA → show pattern detection
+4. Show compliance gap detection
+5. Open knowledge graph → visualize relationships
+6. Show risk ranking
+7. Show alerts
+8. Show evaluation metrics
 
-```json
-[
-  {
-    "question": "What does the OISD guideline require for emergency shutdown testing?",
-    "expected_keywords": ["6 months", "emergency shutdown"],
-    "expected_sources": ["oisd_hot_work_guideline.docx"]
-  }
-]
-```
+---
 
-Tracked metrics:
-- average latency
-- source precision@K
-- keyword recall in answer
+## Sample Data Suggestion
 
-## Suggested demo story for judges
+Use synthetic dataset:
 
-1. Start with **Document Explorer** to show mixed-format ingestion.
-2. Ask the **Copilot** a regulation question and show citations.
-3. Run **RCA** on `Pump P101` to show incident intelligence.
-4. Open **Compliance** and use the demo SOP gap.
-5. Open **Alerts** and **Lessons Learned** to show proactive value.
-6. End with the **Knowledge Graph** as the system’s unified brain.
+* Maintenance logs (repeated failures)
+* Safety guidelines (PDF)
+* SOP documents (DOCX)
 
-## Honest roadmap / future scope
+---
 
-To keep the demo stable and hackathon-friendly, a few enterprise-scale features are intentionally left as next-step upgrades:
-- Neo4j instead of in-process NetworkX
-- LangGraph multi-agent orchestration instead of lightweight supervisor routing
-- PostgreSQL + authentication + role-based access
-- P&ID computer vision parsing
-- notification delivery via email / Firebase / WebSocket
-- SAP / QMS / CMMS integration
+## Troubleshooting
 
-## Recommendation for final pitch
+* OCR errors → install system dependencies
+* Slow extraction → reduce document size
+* Empty graph → ensure entity extraction worked
+* Browser errors → check CORS setup
 
-Use the phrase:
+---
 
-> “We did not build just a chatbot. We built a unified industrial memory and reasoning layer that connects documents, failures, compliance, and operational decisions.”
+## Conclusion
 
-That framing makes the project sound much bigger, more strategic, and more judge-friendly.
+Industrial Knowledge Intelligence provides a unified AI-powered system for:
+
+* Document understanding
+* Root cause analysis
+* Compliance validation
+* Risk prediction
+* Knowledge graph insights
+
+Designed for rapid deployment and effective industrial decision-making.
