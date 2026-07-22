@@ -1,0 +1,22 @@
+pymupdf==1.24.10
+sentence-transformers==3.0.1
+faiss-cpu==1.8.0
+groq==0.11.0
+python-dotenv==1.0.1
+numpy==1.26.4
+
+# Module 1: multi-format ingestion
+python-docx==1.1.2
+pandas==2.2.2
+openpyxl==3.1.5
+pytesseract==0.3.13
+pdf2image==1.17.0
+Pillow==10.4.0
+
+# Module 4: knowledge graph
+networkx==3.3
+pyvis==0.3.2
+
+# Module 12: dashboard
+flask==3.0.3
+flask-cors==5.0.0

@@ -1,0 +1,56 @@
+# 🔐 Environment variables
+.env
+.env.*
+
+# 🐍 Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 🧪 Virtual environments
+env/
+venv/
+.venv/
+
+# 📦 Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# 📊 Data & outputs (VERY IMPORTANT for your project)
+data/
+outputs_store/
+
+# 🧠 Model / embeddings / vector DB (if generated)
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.bin
+*.db
+
+# 📁 Logs
+*.log
+
+# 🖥️ VS Code
+.vscode/
+
+# 🧑‍💻 OS files
+.DS_Store
+Thumbs.db
+
+# 🧪 Testing
+.coverage
+.pytest_cache/
+
+# 📄 Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# 🔑 API keys (extra safety)
+*.key
+secrets.json
+
+# 🚫 Temporary files
+*.tmp
+*.bak

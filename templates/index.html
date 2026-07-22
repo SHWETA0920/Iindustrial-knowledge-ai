@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Industrial Knowledge Intelligence</title>
+<style>
+  :root {
+    --bg: #f4f7fb;
+    --panel: #ffffff;
+    --ink: #12202d;
+    --muted: #5b6877;
+    --line: #dde5ee;
+    --teal: #028090;
+    --mint: #02c39a;
+    --navy: #243447;
+    --danger: #d64545;
+    --warn: #e0a020;
+    --violet: #6c5ce7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(180deg, #edf4fb 0%, var(--bg) 100%);
+    color: var(--ink);
+  }
+  header {
+    background: linear-gradient(135deg, var(--navy), #1b6070);
+    color: white;
+    padding: 26px 32px 22px;
+  }
+  header h1 { margin: 0; font-size: 26px; }
+  header p { margin: 8px 0 0; color: #d2dbe3; max-width: 900px; line-height: 1.5; }
+  .pillbar {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;
+  }
+  .pill {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: white;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    padding: 22px 32px 8px;
+  }
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 4px 18px rgba(18, 32, 45, 0.05);
+  }
+  .stat-card .num { font-size: 30px; font-weight: 700; color: var(--teal); }
+  .stat-card .label { margin-top: 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat-card .sub { margin-top: 8px; font-size: 12px; color: var(--muted); }
+  .tabs {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    padding: 14px 32px 0;
+  }
+  .tab {
+    background: #e9f2f4;
+    color: #34515b;
+    padding: 10px 16px;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    font-size: 14px;
+    border: 1px solid transparent;
+  }
+  .tab.active {
+    background: var(--panel);
+    color: var(--teal);
+    border-color: var(--line);
+    border-bottom-color: var(--panel);
+    font-weight: 700;
+  }
+  .panel-wrap {
+    padding: 0 32px 32px;
+  }
+  .panel {
+    display: none;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 0 14px 14px 14px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(18, 32, 45, 0.06);
+  }
+  .panel.active { display: block; }
+  .section-title { margin: 0 0 6px; font-size: 18px; }
+  .section-sub { margin: 0 0 18px; color: var(--muted); line-height: 1.5; }
+  textarea, input[type=text] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cfd8e3;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    background: white;
+  }
+  textarea { resize: vertical; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  button {
+    background: var(--teal);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  button.secondary { background: #e9f2f4; color: #21424b; }
+  button:hover { opacity: 0.94; }
+  .card {
+    background: #fbfdff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-top: 16px;
+    white-space: pre-wrap;
+    line-height: 1.55;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 18px;
+  }
+  .source-chip, .tag-chip {
+    display: inline-block;
+    background: #eef5f8;
+    color: #294854;
+    padding: 5px 9px;
+    border-radius: 999px;
+    margin: 6px 6px 0 0;
+    font-size: 12px;
+  }
+  .muted { color: var(--muted); }
+  .loading { color: var(--muted); font-style: italic; }
+  .alert-card, .doc-card, .lesson-card {
+    background: #fbfdff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 12px;
+  }
+  .alert-card.HIGH { border-left: 5px solid var(--danger); }
+  .alert-card.MEDIUM { border-left: 5px solid var(--warn); }
+  .sev {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    border-radius: 999px;
+    padding: 4px 9px;
+    margin-bottom: 8px;
+  }
+  .sev.HIGH { background: var(--danger); }
+  .sev.MEDIUM { background: var(--warn); }
+  .graph-box {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #ffffff, #f8fbfe);
+  }
+  .legend {
+    display: flex; gap: 10px; flex-wrap: wrap; padding: 12px 14px 0;
+  }
+  .legend-item { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  svg { width: 100%; height: auto; display: block; }
+  .empty { color: var(--muted); padding: 10px 0; }
+  .small { font-size: 12px; }
+  @media (max-width: 960px) {
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>AI for Industrial Knowledge Intelligence</h1>
+  <p>Unified Asset & Operations Brain with multi-format ingestion, OCR, entity extraction, graph intelligence, supervisor-routed copilot, RCA, compliance analysis, lessons learned, and proactive alerts.</p>
+  <div class="pillbar">
+    <span class="pill">PDF + DOCX + Excel/CSV + OCR</span>
+    <span class="pill">Advanced RAG + Reranking</span>
+    <span class="pill">Knowledge Graph</span>
+    <span class="pill">RCA + Compliance + Lessons Learned</span>
+    <span class="pill">Hackathon Demo Dashboard</span>
+  </div>
+</header>
+
+<div class="stats-row">
+  <div class="stat-card"><div class="num" id="statDocs">–</div><div class="label">Documents</div><div class="sub" id="statFileTypes">File types: –</div></div>
+  <div class="stat-card"><div class="num" id="statChunks">–</div><div class="label">Chunks Indexed</div><div class="sub">Vector-ready retrieval units</div></div>
+  <div class="stat-card"><div class="num" id="statEntities">–</div><div class="label">Entities Extracted</div><div class="sub">Equipment, failures, causes, regulations</div></div>
+  <div class="stat-card"><div class="num" id="statEquip">–</div><div class="label">Equipment Tags</div><div class="sub">Graph-linked assets</div></div>
+  <div class="stat-card"><div class="num" id="statPatterns">–</div><div class="label">Recurring Patterns</div><div class="sub">Auto-detected lessons learned</div></div>
+  <div class="stat-card"><div class="num" id="statRegulatory">–</div><div class="label">Regulatory Docs</div><div class="sub" id="statAlerts">Alerts: –</div></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="copilot">Copilot</div>
+  <div class="tab" data-tab="rca">RCA Agent</div>
+  <div class="tab" data-tab="compliance">Compliance</div>
+  <div class="tab" data-tab="alerts">Alerts</div>
+  <div class="tab" data-tab="documents">Document Explorer</div>
+  <div class="tab" data-tab="graph">Knowledge Graph</div>
+  <div class="tab" data-tab="lessons">Lessons Learned</div>
+</div>
+
+<div class="panel-wrap">
+  <div class="panel active" id="panel-copilot">
+    <h2 class="section-title">Supervisor Copilot</h2>
+    <p class="section-sub">Ask a normal industrial question. The supervisor routes between advanced RAG, RCA-style reasoning, and lessons-learned summaries when relevant.</p>
+    <textarea id="chatQuestion" rows="3" placeholder="Example: What recurring failure pattern exists for Pump P101?"></textarea>
+    <div class="actions">
+      <button onclick="askQuestion()">Ask Copilot</button>
+      <button class="secondary" onclick="seedQuestion('What recurring failure pattern exists for Pump P101?')">Use demo question</button>
+    </div>
+    <div id="chatResult"></div>
+  </div>
+
+  <div class="panel" id="panel-rca">
+    <h2 class="section-title">Root Cause Analysis Agent</h2>
+    <p class="section-sub">Run an equipment-specific RCA using graph history plus RAG evidence from manuals and maintenance documents.</p>
+    <input type="text" id="rcaEquipment" placeholder="Equipment tag, e.g. Pump P101">
+    <div class="actions">
+      <button onclick="runRca()">Run RCA</button>
+      <button class="secondary" onclick="document.getElementById('rcaEquipment').value='Pump P101'">Use Pump P101</button>
+    </div>
+    <div id="rcaResult"></div>
+  </div>
+
+  <div class="panel" id="panel-compliance">
+    <h2 class="section-title">Compliance Intelligence</h2>
+    <p class="section-sub">Paste a plant procedure and compare it against retrieved regulatory guidance such as OISD / Factory Act / PESO content in your corpus.</p>
+    <input type="text" id="complianceTopic" placeholder="Regulatory topic, e.g. emergency shutdown test frequency" style="margin-bottom:10px;">
+    <textarea id="complianceProcedure" rows="6" placeholder="Paste SOP / procedure text here..."></textarea>
+    <div class="actions">
+      <button onclick="checkCompliance()">Check Compliance</button>
+      <button class="secondary" onclick="seedComplianceDemo()">Load demo gap</button>
+    </div>
+    <div id="complianceResult"></div>
+  </div>
+
+  <div class="panel" id="panel-alerts">
+    <h2 class="section-title">Proactive Alerts</h2>
+    <p class="section-sub">Recurring failure patterns automatically escalate into warning cards that the team can act on.</p>
+    <div class="actions"><button onclick="loadAlerts()">Refresh Alerts</button></div>
+    <div id="alertsResult"></div>
+  </div>
+
+  <div class="panel" id="panel-documents">
+    <h2 class="section-title">Document Explorer</h2>
+    <p class="section-sub">Browse ingested files, categories, page counts, and chunk volumes to prove breadth of your ingestion pipeline.</p>
+    <div class="actions"><button onclick="loadDocuments()">Refresh Documents</button></div>
+    <div id="documentsResult"></div>
+  </div>
+
+  <div class="panel" id="panel-graph">
+    <h2 class="section-title">Knowledge Graph View</h2>
+    <p class="section-sub">A lightweight visualization of the asset-failure-cause-document network for demo storytelling. Build the graph first to populate it.</p>
+    <div class="actions"><button onclick="loadGraph()">Refresh Graph</button></div>
+    <div class="legend" id="graphLegend"></div>
+    <div class="graph-box" id="graphBox"></div>
+  </div>
+
+  <div class="panel" id="panel-lessons">
+    <h2 class="section-title">Lessons Learned Engine</h2>
+    <p class="section-sub">Find repeated incidents, link them to likely causes, and surface standard recommendations for plant-wide prevention.</p>
+    <div class="actions"><button onclick="loadLessons()">Refresh Lessons</button></div>
+    <div id="lessonsResult"></div>
+  </div>
+</div>
+
+<script>
+const tabs = document.querySelectorAll('.tab');
+const panels = document.querySelectorAll('.panel');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+
+    if (tab.dataset.tab === 'alerts') loadAlerts();
+    if (tab.dataset.tab === 'documents') loadDocuments();
+    if (tab.dataset.tab === 'graph') loadGraph();
+    if (tab.dataset.tab === 'lessons') loadLessons();
+  });
+});
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str ?? '';
+  return div.innerHTML;
+}
+
+function seedQuestion(q) {
+  document.getElementById('chatQuestion').value = q;
+}
+
+function seedComplianceDemo() {
+  document.getElementById('complianceTopic').value = 'emergency shutdown test frequency';
+  document.getElementById('complianceProcedure').value = 'Emergency shutdown function test shall be performed every 12 months for all process units. Fire watch presence must be verified before hot work.';
+}
+
+async function fetchJson(url, options) {
+  const res = await fetch(url, options);
+  return await res.json();
+}
+
+async function loadStats() {
+  try {
+    const data = await fetchJson('/api/stats');
+    document.getElementById('statDocs').textContent = data.documents_processed;
+    document.getElementById('statChunks').textContent = data.chunk_count;
+    document.getElementById('statEntities').textContent = data.entities_extracted;
+    document.getElementById('statEquip').textContent = data.equipment_identified;
+    document.getElementById('statPatterns').textContent = data.failure_patterns;
+    document.getElementById('statRegulatory').textContent = data.regulatory_docs;
+    document.getElementById('statAlerts').textContent = 'Alerts: ' + data.alerts_count;
+    const typeSummary = Object.entries(data.file_types || {}).map(([k, v]) => `${k}:${v}`).join(' · ') || '–';
+    document.getElementById('statFileTypes').textContent = 'File types: ' + typeSummary;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function askQuestion() {
+  const question = document.getElementById('chatQuestion').value.trim();
+  if (!question) return;
+  const resultDiv = document.getElementById('chatResult');
+  resultDiv.innerHTML = '<div class="card loading">Supervisor is routing the request...</div>';
+  try {
+    const data = await fetchJson('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    });
+    if (data.error) {
+      resultDiv.innerHTML = `<div class="card">${escapeHtml(data.error)}</div>`;
+      return;
+    }
+    const chips = (data.sources || []).map(s => `<span class="source-chip">${escapeHtml(s.source)} p.${escapeHtml(String(s.page))}${s.score !== undefined ? ` · score ${escapeHtml(String(s.score))}` : ''}</span>`).join('');
+    resultDiv.innerHTML = `
+      <div class="card"><strong>Mode:</strong> ${escapeHtml(data.mode || 'rag')}\n\n${escapeHtml(data.answer || '')}</div>
+      <div class="card small"><strong>Supporting sources</strong><br>${chips || '<span class="muted">No explicit source chips returned for this mode.</span>'}</div>
+    `;
+  } catch (e) {
+    resultDiv.innerHTML = `<div class="card">Error: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+async function runRca() {
+  const equipment = document.getElementById('rcaEquipment').value.trim();
+  if (!equipment) return;
+  const resultDiv = document.getElementById('rcaResult');
+  resultDiv.innerHTML = '<div class="card loading">Running RCA analysis...</div>';
+  try {
+    const data = await fetchJson('/api/rca', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ equipment_tag: equipment })
+    });
+    if (data.error) {
+      resultDiv.innerHTML = `<div class="card">${escapeHtml(data.error)}</div>`;
+      return;
+    }
+    const sourceChips = (data.rag_sources || []).map(s => `<span class="source-chip">${escapeHtml(s.source)} p.${escapeHtml(String(s.page))}</span>`).join('');
+    resultDiv.innerHTML = `
+      <div class="card">${escapeHtml(data.rca_report || '')}</div>
+      <div class="card small"><strong>RAG evidence</strong><br>${sourceChips || '<span class="muted">No RAG evidence returned.</span>'}</div>
+    `;
+  } catch (e) {
+    resultDiv.innerHTML = `<div class="card">Error: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+async function checkCompliance() {
+  const topic = document.getElementById('complianceTopic').value.trim();
+  const procedure = document.getElementById('complianceProcedure').value.trim();
+  if (!topic || !procedure) return;
+  const resultDiv = document.getElementById('complianceResult');
+  resultDiv.innerHTML = '<div class="card loading">Checking compliance gaps...</div>';
+  try {
+    const data = await fetchJson('/api/compliance', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, procedure_text: procedure })
+    });
+    if (data.error) {
+      resultDiv.innerHTML = `<div class="card">${escapeHtml(data.error)}</div>`;
+      return;
+    }
+    const src = (data.regulation_sources || []).map(s => `<span class="source-chip">${escapeHtml(s.source)} p.${escapeHtml(String(s.page))}</span>`).join('');
+    let html = `<div class="card"><strong>Compliant:</strong> ${escapeHtml(String(data.compliant))}\n<strong>Severity:</strong> ${escapeHtml(data.severity || 'none')}\n<strong>Gap:</strong> ${escapeHtml(data.gap_description || 'No gap identified')}\n<strong>Clause reference:</strong> ${escapeHtml(data.clause_reference || 'n/a')}</div>`;
+    if (!data.compliant && data.corrective_draft) {
+      html += `<div class="card"><strong>Corrected section</strong>\n${escapeHtml(data.corrective_draft.corrected_section || '')}\n\n<strong>Audit-log summary</strong>\n${escapeHtml(data.corrective_draft.change_summary || '')}</div>`;
+    }
+    html += `<div class="card small"><strong>Regulatory evidence</strong><br>${src || '<span class="muted">No source chips returned.</span>'}</div>`;
+    resultDiv.innerHTML = html;
+  } catch (e) {
+    resultDiv.innerHTML = `<div class="card">Error: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+async function loadAlerts() {
+  const container = document.getElementById('alertsResult');
+  container.innerHTML = '<div class="card loading">Loading alerts...</div>';
+  try {
+    const data = await fetchJson('/api/alerts');
+    if (!data.alerts || !data.alerts.length) {
+      container.innerHTML = '<div class="card">No recurring failure alerts yet. Build the graph after entity extraction to populate this feed.</div>';
+      return;
+    }
+    container.innerHTML = data.alerts.map(a => `
+      <div class="alert-card ${escapeHtml(a.severity)}">
+        <span class="sev ${escapeHtml(a.severity)}">${escapeHtml(a.severity)}</span>
+        <div><strong>${escapeHtml(a.failure)}</strong></div>
+        <div class="muted small" style="margin-top:6px;">Occurrences: ${escapeHtml(String(a.occurrences))}</div>
+        <div class="muted small">Equipment: ${escapeHtml((a.equipment_involved || []).join(', ') || 'unlinked equipment')}</div>
+        <div class="muted small">Evidence docs: ${escapeHtml((a.evidence_docs || []).join(', ') || 'n/a')}</div>
+        <div style="margin-top:8px;">${escapeHtml(a.recommendation)}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    container.innerHTML = `<div class="card">Error: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+async function loadDocuments() {
+  const container = document.getElementById('documentsResult');
+  container.innerHTML = '<div class="card loading">Loading document inventory...</div>';
+  try {
+    const data = await fetchJson('/api/documents');
+    if (!data.documents || !data.documents.length) {
+      container.innerHTML = '<div class="card">No ingested documents yet. Put files into data/ and run the pipeline.</div>';
+      return;
+    }
+    container.innerHTML = data.documents.map(doc => `
+      <div class="doc-card">
+        <strong>${escapeHtml(doc.source)}</strong>
+        <div class="muted small" style="margin-top:6px;">Type: ${escapeHtml(doc.file_type)} · Pages: ${escapeHtml(String(doc.page_count))} · Chunks: ${escapeHtml(String(doc.chunk_count))}</div>
+        <div style="margin-top:8px;">${(doc.categories || []).map(cat => `<span class="tag-chip">${escapeHtml(cat)}</span>`).join('')}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    container.innerHTML = `<div class="card">Error: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+async function loadLessons() {
+  const container = document.getElementById('lessonsResult');
+  container.innerHTML = '<div class="card loading">Loading lessons learned...</div>';
+  try {
+    const data = await fetchJson('/api/lessons');
+    if (!data.lessons || !data.lessons.length) {
+      container.innerHTML = '<div class="card">No lessons learned patterns found yet.</div>';
+      return;
+    }
+    container.innerHTML = data.lessons.map(item => `
+      <div class="lesson-card">
+        <strong>${escapeHtml(item.failure)}</strong>
+        <div class="muted small" style="margin-top:6px;">Occurrences: ${escapeHtml(String(item.occurrences))}</div>
+        <div class="muted small">Equipment: ${escapeHtml((item.equipment_involved || []).join(', ') || 'unlinked equipment')}</div>
+        <div class="muted small">Root causes: ${escapeHtml((item.root_causes || []).join(', ') || 'not explicitly captured')}</div>
+        <div class="muted small">Evidence docs: ${escapeHtml((item.evidence_docs || []).join(', ') || 'n/a')}</div>
+        <div style="margin-top:8px;">${escapeHtml(item.recommendation)}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    container.innerHTML = `<div class="card">Error: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+async function loadGraph() {
+  const container = document.getElementById('graphBox');
+  const legend = document.getElementById('graphLegend');
+  container.innerHTML = '<div class="card loading">Loading graph view...</div>';
+  try {
+    const data = await fetchJson('/api/graph');
+    if (!data.nodes || !data.nodes.length) {
+      container.innerHTML = '<div class="card">No graph available yet. Run entity extraction and graph build first.</div>';
+      legend.innerHTML = '';
+      return;
+    }
+
+    legend.innerHTML = (data.legend || []).map(item => `<span class="legend-item"><span class="dot" style="background:${escapeHtml(item.color)}"></span>${escapeHtml(item.type)}</span>`).join('');
+
+    const nodeMap = {};
+    (data.nodes || []).forEach(n => nodeMap[n.id] = n);
+    const svgWidth = data.width || 980;
+    const svgHeight = data.height || 560;
+
+    const edgeLines = (data.edges || []).map(edge => {
+      const s = nodeMap[edge.source];
+      const t = nodeMap[edge.target];
+      if (!s || !t) return '';
+      return `
+        <line x1="${s.x}" y1="${s.y}" x2="${t.x}" y2="${t.y}" stroke="#c9d6e4" stroke-width="1.6" marker-end="url(#arrow)" />
+        <text x="${(s.x + t.x) / 2}" y="${(s.y + t.y) / 2 - 6}" text-anchor="middle" font-size="10" fill="#5b6877">${escapeHtml(edge.relation)}</text>
+      `;
+    }).join('');
+
+    const nodeCircles = (data.nodes || []).map(node => `
+      <g>
+        <circle cx="${node.x}" cy="${node.y}" r="18" fill="${escapeHtml(node.color)}" opacity="0.92"></circle>
+        <text x="${node.x}" y="${node.y - 28}" text-anchor="middle" font-size="11" fill="#1b2530">${escapeHtml(node.label)}</text>
+      </g>
+    `).join('');
+
+    container.innerHTML = `
+      <svg viewBox="0 0 ${svgWidth} ${svgHeight}" role="img" aria-label="Knowledge graph visualization">
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#c9d6e4"></path>
+          </marker>
+        </defs>
+        <rect x="0" y="0" width="${svgWidth}" height="${svgHeight}" fill="#fbfdff"></rect>
+        ${edgeLines}
+        ${nodeCircles}
+      </svg>
+    `;
+  } catch (e) {
+    container.innerHTML = `<div class="card">Error: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+loadStats();
+</script>
+</body>
+</html>
